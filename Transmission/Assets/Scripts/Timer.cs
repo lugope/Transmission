@@ -40,17 +40,22 @@ public class Timer : MonoBehaviour {
 
 	void deathExplosion(){
 
+		int i = 0;
 		RaycastHit2D[] castStar = Physics2D.CircleCastAll (transform.position, explosionRadius, Vector2.zero);
 		foreach (RaycastHit2D raycastHit in castStar) {
 
 			GameObject obj = raycastHit.collider.gameObject;
 
 
-			if(obj.tag == "Player" ){
+
+			if(obj.tag == "Player" && obj != gameObject){
+				i++;
 				Movement script = obj.GetComponent<Movement>();
 
 				if ( script.isFinalTarget ) {
+					Debug.Log(" Kabuum!");
 					Debug.Log(obj.name + " Infected, Mission Complete!");
+
 				} else {
 					
 					Debug.Log(gameObject.GetComponent<Movement>().cam);
@@ -64,8 +69,6 @@ public class Timer : MonoBehaviour {
 					script.enabled = true;
 					script.initiatePlayer();
 
-					//Due to a problem with the camera, that sometimes get other not. Break assure that only one is infected.
-					break;
 				}
 			}
 		}
