@@ -10,10 +10,12 @@ public class Movement : MonoBehaviour {
 	public bool isDead = false;
 	public bool isFinalTarget = false;
 	public GameObject cam;
+	public GameObject prefabCorpse; //Reference Corpse to leave behind after death
 
 	private Timer timer;
 	private Rigidbody2D rigidBody;
 	private SpriteRenderer spriteRenderer;
+	private Animator animator;
 
 	bool leftArrowDown = false;
 	bool rightArrowDown = false;
@@ -22,6 +24,8 @@ public class Movement : MonoBehaviour {
 		rigidBody = GetComponent<Rigidbody2D> ();
 		spriteRenderer = GetComponent<SpriteRenderer> ();
 		rigidBody.isKinematic = true;
+
+		animator = GetComponent<Animator> ();
 	}
 
 	void Start () {
@@ -37,21 +41,25 @@ public class Movement : MonoBehaviour {
 	}
 
 	public void die(){
-		Stop ();
+		if (!isDead){
+			Stop ();
 
-		gameObject.layer = 0;
+			GetComponent<BoxCollider2D> ().enabled = false;
+			gameObject.GetComponentInChildren<TextMesh> ().text = "";
+			gameObject.layer = 0;
 
-		enabled = false;
-		isDead = true;
+			enabled = false;
+			isDead = true;
 
-		cam = null;
+			cam.GetComponent<CameraController>().follow = null; 
+			cam = null;
 
-		rigidBody.isKinematic = true;
+			Instantiate(prefabCorpse, gameObject.transform.position, gameObject.transform.rotation);
 
-		GetComponent<BoxCollider2D> ().enabled = false;
-		gameObject.GetComponentInChildren<TextMesh> ().text = "";
+			Destroy(gameObject);
 
-		Debug.Log(gameObject.name + " explosion!");
+			Debug.Log(gameObject.name + " Dead!");
+		}
 	}
 	
 
@@ -68,8 +76,29 @@ public class Movement : MonoBehaviour {
 			spriteRenderer.flipX = true;
 		}
 
+		//Chack status of animation
+		CheckAnimationState();
 	}
-		
+
+    //	Animation Handler
+	void CheckAnimationState(){
+		//Jump animation
+		if ( IsGrounded() ) {
+			animator.SetBool("isGrounded", true);
+			animator.SetBool("isRunning", false);
+
+		} else {
+			animator.SetBool("isGrounded", false);
+		}
+
+		//Running animation
+		if ( Mathf.Abs(rigidBody.velocity.x) > 0 ) {
+			animator.SetBool("isRunning", true);
+
+		} else {
+			animator.SetBool("isRunning", false);
+		}
+	}
 
 	void OnCollisionEnter2D(Collision2D col){
 		//Debug.Log("Body touched!");

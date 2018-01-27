@@ -19,11 +19,15 @@ public class CameraController : MonoBehaviour {
 	// Late Update is called after frame update
 	void LateUpdate () {
 
-		transform.position = follow.transform.position + offset;
+		// If follow exists, update camera position
+		if( follow ){
+			transform.position = follow.transform.position + offset;
+		}
 
 	}
 
 	public void updateFollow(GameObject newFollow){
+		
 		follow = newFollow;
 		Start();
 
