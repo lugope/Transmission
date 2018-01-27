@@ -44,7 +44,7 @@ public class Movement : MonoBehaviour {
 		if (!isDead){
 			Stop ();
 
-			GetComponent<BoxCollider2D> ().enabled = false;
+			//GetComponent<BoxCollider2D> ().enabled = false;
 			gameObject.GetComponentInChildren<TextMesh> ().text = "";
 			gameObject.layer = 0;
 
@@ -82,6 +82,7 @@ public class Movement : MonoBehaviour {
 
     //	Animation Handler
 	void CheckAnimationState(){
+		
 		//Jump animation
 		if ( IsGrounded() ) {
 			animator.SetBool("isGrounded", true);
@@ -98,10 +99,6 @@ public class Movement : MonoBehaviour {
 		} else {
 			animator.SetBool("isRunning", false);
 		}
-	}
-
-	void OnCollisionEnter2D(Collision2D col){
-		//Debug.Log("Body touched!");
 	}
 
 	void handleInput(){
@@ -141,7 +138,10 @@ public class Movement : MonoBehaviour {
 	}
 
 	public void Stop(){
-		rigidBody.velocity = new Vector2 (0f,rigidBody.velocity.y);
+		
+		float vely = rigidBody.velocity.y;
+		rigidBody.velocity = new Vector2 (0f,vely);
+
 	}
 
 	void Move(Vector2 direction){
@@ -157,4 +157,17 @@ public class Movement : MonoBehaviour {
 			return false;
 		} 
 	}
+
+
+	//Physics Handle
+
+	//Ignore colisions
+	void OnCollisionEnter2D(Collision2D collision){
+		if(collision.gameObject.tag == "Player"){
+			//Debug.Log("Player ignored by corpse.");
+			Physics2D.IgnoreCollision(collision.collider, gameObject.GetComponent<Collider2D>());
+		}
+	}
+
+
 }

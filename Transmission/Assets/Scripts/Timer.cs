@@ -10,8 +10,10 @@ public class Timer : MonoBehaviour {
 	private bool done = false;
 
 
+
 	void Start () {
 		timeLeft = countDown;
+		countDownText = gameObject.GetComponentInChildren<TextMesh>();
 	}
 
 	// Update is called once per frame
@@ -26,7 +28,7 @@ public class Timer : MonoBehaviour {
 			die ();
 			done = true;
 		} else {
-			gameObject.GetComponentInChildren<TextMesh> ().text =  ((int)timeLeft).ToString();
+			countDownText.text =  ((int)timeLeft).ToString();
 		}
 	}
 
