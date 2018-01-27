@@ -34,8 +34,8 @@ public class Timer : MonoBehaviour {
 		Debug.Log (gameObject.name + " died!");
 
 		Movement script = gameObject.GetComponent<Movement> ();
-		script.die();
 		deathExplosion ();
+		script.die();
 	}
 
 	void deathExplosion(){
@@ -49,11 +49,25 @@ public class Timer : MonoBehaviour {
 			if(obj.tag == "Player" ){
 				Movement script = obj.GetComponent<Movement>();
 
-				script.enabled = true;
-				script.initiatePlayer();
+				if ( script.isFinalTarget ) {
+					Debug.Log(obj.name + " Infected, Mission Complete!");
+				} else {
+					
+					Debug.Log(gameObject.GetComponent<Movement>().cam);
 
+					//Transmitting the camera
+					script.cam = gameObject.GetComponent<Movement>().cam;
+					CameraController cam = script.cam.GetComponent<CameraController>();
+					cam.updateFollow(script.gameObject);
+
+					//Running next player
+					script.enabled = true;
+					script.initiatePlayer();
+
+					//Due to a problem with the camera, that sometimes get other not. Break assure that only one is infected.
+					break;
+				}
 			}
-			Debug.Log(obj.name + "explosion");
 		}
 	}
 }

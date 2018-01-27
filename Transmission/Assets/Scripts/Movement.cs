@@ -8,11 +8,12 @@ public class Movement : MonoBehaviour {
 	public float movementForce = 3f;
 	public LayerMask groundLayer;
 	public bool isDead = false;
+	public bool isFinalTarget = false;
+	public GameObject cam;
 
 	private Timer timer;
 	private Rigidbody2D rigidBody;
 	private SpriteRenderer spriteRenderer;
-	private bool XDirection = true; //Gets the direction that the character is facing
 
 	bool leftArrowDown = false;
 	bool rightArrowDown = false;
@@ -20,6 +21,7 @@ public class Movement : MonoBehaviour {
 	void Awake(){
 		rigidBody = GetComponent<Rigidbody2D> ();
 		spriteRenderer = GetComponent<SpriteRenderer> ();
+		rigidBody.isKinematic = true;
 	}
 
 	void Start () {
@@ -27,9 +29,8 @@ public class Movement : MonoBehaviour {
 	}
 
 	public void initiatePlayer(){
-//		timer = GetComponent<Timer> ();
-//		timer.enabled = true;
-
+		timer = GetComponent<Timer> ();
+		timer.enabled = true;
 		gameObject.layer = 0;
 		rigidBody.isKinematic = false;
 
@@ -43,11 +44,14 @@ public class Movement : MonoBehaviour {
 		enabled = false;
 		isDead = true;
 
+		cam = null;
 
 		rigidBody.isKinematic = true;
 
 		GetComponent<BoxCollider2D> ().enabled = false;
 		gameObject.GetComponentInChildren<TextMesh> ().text = "";
+
+		Debug.Log(gameObject.name + " explosion!");
 	}
 	
 
@@ -66,6 +70,10 @@ public class Movement : MonoBehaviour {
 
 	}
 		
+
+	void OnCollisionEnter2D(Collision2D col){
+		//Debug.Log("Body touched!");
+	}
 
 	void handleInput(){
 
