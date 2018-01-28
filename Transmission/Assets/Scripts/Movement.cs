@@ -4,9 +4,9 @@ using System.Collections;
 
 public class Movement : MonoBehaviour {
 
-	public float jumpForce = 6f;
-	public float wallJumpForce = 10f;
-	public float movementForce = 3f;
+	public float jumpForce = 2.5f;
+	public float wallJumpForce = 8f;
+	public float movementForce = 1.4f;
 	public LayerMask groundLayer;
 	public LayerMask wallLayer;
 	public bool isDead = false;
@@ -18,6 +18,9 @@ public class Movement : MonoBehaviour {
 	private Rigidbody2D rigidBody;
 	private SpriteRenderer spriteRenderer;
 	private Animator animator;
+
+	private int jumpTimeIterator = 0;
+	public int jumpMaxTimeIterator = 7;
 
 	bool leftArrowDown = false;
 	bool rightArrowDown = false;
@@ -80,13 +83,17 @@ public class Movement : MonoBehaviour {
 
 		//Chack status of animation
 		CheckAnimationState();
+
+		if ( jumpTimeIterator > 0 ) {
+			jumpTimeIterator -= 1;
+		}
 	}
 
     //	Animation Handler
 	void CheckAnimationState(){
 		
 		//Jump animation
-		if ( IsGrounded() ) {
+		if ( IsGrounded() == 1 ) {
 			animator.SetBool("isGrounded", true);
 			animator.SetBool("isRunning", false);
 
@@ -132,25 +139,76 @@ public class Movement : MonoBehaviour {
 		}
 	}
 
+	int grounded = 0;
+
 	// Moviment Handle
 	void Jump(){
-		if(IsGrounded()) {
-			rigidBody.AddForce (Vector2.up * jumpForce, ForceMode2D.Impulse );
 
-			if ( Physics2D.Raycast(this.transform.position, Vector2.right, 0.2f, groundLayer.value) ) {
-				rigidBody.AddForce (Vector2.left * wallJumpForce, ForceMode2D.Impulse );
 
-			} else if (Physics2D.Raycast(this.transform.position, Vector2.left, 0.2f, groundLayer.value)){
-				rigidBody.AddForce (Vector2.right * wallJumpForce, ForceMode2D.Impulse );
+		if( jumpTimeIterator < jumpMaxTimeIterator/2 && jumpTimeIterator > 0 && grounded == 0 ){
+			
+			rigidBody.velocity = new Vector2(rigidBody.velocity.x, 0);
+			jumpWall();
+		}
+
+		grounded = IsGrounded();
+
+		//Debug.Log( grounded );
+
+		if ( grounded > 0) {
+
+			rigidBody.velocity = new Vector2(rigidBody.velocity.x, 0);
+
+			if(grounded == 1 || grounded == 5 || grounded == 9){
+				rigidBody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+				grounded = 0;
+				return;
+			}
+
+			if ( grounded == 4 ) {
+				//Same side of the wall
+				if( Input.GetKey(KeyCode.RightArrow) ){ 
+					rigidBody.AddForce(Vector2.left * jumpForce, ForceMode2D.Impulse);
+				}
+				rigidBody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+
+			}
+
+			if ( grounded == 8 ) {
+				//Same side of the wall
+				if( Input.GetKey(KeyCode.LeftArrow) ){ 
+					rigidBody.AddForce(Vector2.right * jumpForce, ForceMode2D.Impulse);
+				}
+				rigidBody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 			}
 		}
+
+		grounded = 0;
+		return;
+	}
+
+
+	//Wall jump to oposite side
+	public void jumpWall(){
+
+		//x movement
+		if ( Input.GetKey(KeyCode.LeftArrow) ) {
+			rigidBody.AddForce(Vector2.left * wallJumpForce, ForceMode2D.Impulse);
+		}
+	
+		if ( Input.GetKey(KeyCode.RightArrow) ) {
+			rigidBody.AddForce(Vector2.right * wallJumpForce, ForceMode2D.Impulse);
+		}
+
+		//Apply jump
+		rigidBody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+
+		jumpTimeIterator = 0;
 	}
 
 	public void Stop(){
-		
 		float vely = rigidBody.velocity.y;
 		rigidBody.velocity = new Vector2 (0f,vely);
-
 	}
 
 	void Move(Vector2 direction){
@@ -158,17 +216,20 @@ public class Movement : MonoBehaviour {
 //		rigidBody.AddForce (direction * movementForce, ForceMode2D.Impulse);
 	}
 
-	bool IsGrounded() {
-		bool raycastGround = Physics2D.Raycast(this.transform.position, Vector2.down, 0.2f, groundLayer.value);
-		bool rightRaycast = Physics2D.Raycast(this.transform.position, Vector2.right, 0.2f, groundLayer.value);
-		bool leftRaycast = Physics2D.Raycast(this.transform.position, Vector2.left, 0.2f, groundLayer.value);
+	int IsGrounded() {
+		
+		int raycastGround = Physics2D.Raycast(this.transform.position, Vector2.down, 0.16f, groundLayer.value)? 1:0;
+		int rightRaycast = Physics2D.Raycast(this.transform.position, Vector2.right, 0.1f, groundLayer.value)? 4:0;
+		int leftRaycast = Physics2D.Raycast(this.transform.position, Vector2.left, 0.1f, groundLayer.value)? 8:0;
 
-		if (raycastGround|| rightRaycast || leftRaycast) {
-			return true;
+		int sum = raycastGround + rightRaycast + leftRaycast;
+		//Debug.Log(raycastGround + " " + rightRaycast + " " + leftRaycast);
 
-		} else {
-			return false;
-		} 
+		if( sum%2 == 0 && sum != 0){
+			jumpTimeIterator = jumpMaxTimeIterator;
+		}
+
+		return sum;
 	}
 
 	//Physics Handle

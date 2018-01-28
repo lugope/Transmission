@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class GameEventHandle : MonoBehaviour {
 
+	public Camera camera;
+
 	//Static singleton property
 	public static GameEventHandle Instance {
 		get; private set;
@@ -19,7 +21,7 @@ public class GameEventHandle : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
+		cameraFollow(initialPlayer);
 	}
 	
 	// Update is called once per frame
@@ -36,11 +38,16 @@ public class GameEventHandle : MonoBehaviour {
 
 	public void GameOver (){
 		Debug.Log("No one loves me... Game Over!" );
-		SceneManager.LoadScene("scene_extreme");
+		SceneManager.LoadScene("tile_scene");
 	}
 
 	public void GameWon (){
-		SceneManager.LoadScene("scene_extreme");
+		SceneManager.LoadScene("tile_scene");
+	}
+
+	public void cameraFollow(GameObject obj){
+		CameraController script = camera.GetComponent<CameraController>(); 
+		script.updateFollow(obj);
 	}
 
 	void StartGame(){

@@ -66,6 +66,9 @@ public class Timer : MonoBehaviour {
 //					Debug.Log(gameObject.GetComponent<Movement>().cam);
 
 					//Transmitting the camera
+
+					GameEventHandle.Instance.cameraFollow(script.gameObject);
+
 //					script.cam = gameObject.GetComponent<Movement>().cam;
 //					CameraController cam = script.cam.GetComponent<CameraController>();
 //					cam.updateFollow(script.gameObject);
