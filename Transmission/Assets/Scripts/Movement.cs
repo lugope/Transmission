@@ -13,6 +13,7 @@ public class Movement : MonoBehaviour {
 	public bool isFinalTarget = false;
 	public GameObject cam;
 	public GameObject prefabCorpse; //Reference Corpse to leave behind after death
+	public GameObject deathParticle; //Particle FX from the death
 
 	private Timer timer;
 	private Rigidbody2D rigidBody;
@@ -61,6 +62,11 @@ public class Movement : MonoBehaviour {
 
 			Instantiate(prefabCorpse, gameObject.transform.position, gameObject.transform.rotation);
 
+			//Instantiate death particles
+			if(deathParticle){
+				Instantiate(deathParticle, gameObject.transform.position, gameObject.transform.rotation);
+			}
+
 			Destroy(gameObject);
 
 			Debug.Log(gameObject.name + " Dead!");
@@ -91,14 +97,20 @@ public class Movement : MonoBehaviour {
 
     //	Animation Handler
 	void CheckAnimationState(){
-		
+
+		int grounded = IsGrounded();
+
 		//Jump animation
-		if ( IsGrounded() == 1 ) {
+		if ( grounded % 2 == 1 ) {
 			animator.SetBool("isGrounded", true);
-			animator.SetBool("isRunning", false);
+
+		} else if ( grounded % 2 == 0 && grounded != 0 ) {
+			animator.SetBool("isGrounded", false);
+			animator.SetBool("isWalling", true);
 
 		} else {
 			animator.SetBool("isGrounded", false);
+			animator.SetBool("isWalling", false);
 		}
 
 		//Running animation
