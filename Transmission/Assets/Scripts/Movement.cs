@@ -5,8 +5,10 @@ using System.Collections;
 public class Movement : MonoBehaviour {
 
 	public float jumpForce = 6f;
+	public float wallJumpForce = 10f;
 	public float movementForce = 3f;
 	public LayerMask groundLayer;
+	public LayerMask wallLayer;
 	public bool isDead = false;
 	public bool isFinalTarget = false;
 	public GameObject cam;
@@ -51,8 +53,8 @@ public class Movement : MonoBehaviour {
 			enabled = false;
 			isDead = true;
 
-			cam.GetComponent<CameraController>().follow = null; 
-			cam = null;
+//			cam.GetComponent<CameraController>().follow = null; 
+//			cam = null;
 
 			Instantiate(prefabCorpse, gameObject.transform.position, gameObject.transform.rotation);
 
@@ -134,6 +136,13 @@ public class Movement : MonoBehaviour {
 	void Jump(){
 		if(IsGrounded()) {
 			rigidBody.AddForce (Vector2.up * jumpForce, ForceMode2D.Impulse );
+
+			if ( Physics2D.Raycast(this.transform.position, Vector2.right, 0.2f, groundLayer.value) ) {
+				rigidBody.AddForce (Vector2.left * wallJumpForce, ForceMode2D.Impulse );
+
+			} else if (Physics2D.Raycast(this.transform.position, Vector2.left, 0.2f, groundLayer.value)){
+				rigidBody.AddForce (Vector2.right * wallJumpForce, ForceMode2D.Impulse );
+			}
 		}
 	}
 
@@ -150,14 +159,17 @@ public class Movement : MonoBehaviour {
 	}
 
 	bool IsGrounded() {
-		if (Physics2D.Raycast(this.transform.position, Vector2.down, 0.2f, groundLayer.value)) {
+		bool raycastGround = Physics2D.Raycast(this.transform.position, Vector2.down, 0.2f, groundLayer.value);
+		bool rightRaycast = Physics2D.Raycast(this.transform.position, Vector2.right, 0.2f, groundLayer.value);
+		bool leftRaycast = Physics2D.Raycast(this.transform.position, Vector2.left, 0.2f, groundLayer.value);
+
+		if (raycastGround|| rightRaycast || leftRaycast) {
 			return true;
-		}
-		else {
+
+		} else {
 			return false;
 		} 
 	}
-
 
 	//Physics Handle
 

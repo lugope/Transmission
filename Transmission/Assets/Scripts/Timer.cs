@@ -60,12 +60,12 @@ public class Timer : MonoBehaviour {
 
 				} else {
 					
-					Debug.Log(gameObject.GetComponent<Movement>().cam);
+//					Debug.Log(gameObject.GetComponent<Movement>().cam);
 
 					//Transmitting the camera
-					script.cam = gameObject.GetComponent<Movement>().cam;
-					CameraController cam = script.cam.GetComponent<CameraController>();
-					cam.updateFollow(script.gameObject);
+//					script.cam = gameObject.GetComponent<Movement>().cam;
+//					CameraController cam = script.cam.GetComponent<CameraController>();
+//					cam.updateFollow(script.gameObject);
 
 					//Running next player
 					script.enabled = true;
