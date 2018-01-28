@@ -7,6 +7,12 @@ public class GameEventHandle : MonoBehaviour {
 
 	public Camera camera;
 
+	public AudioClip explosion, walk1, walk2, land, jump, drop, bat;
+
+	public GameObject fxManager;
+	public AudioSource audioPlayer;
+
+
 	//Static singleton property
 	public static GameEventHandle Instance {
 		get; private set;
@@ -22,6 +28,7 @@ public class GameEventHandle : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		cameraFollow(initialPlayer);
+		audioPlayer = fxManager.GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -60,4 +67,29 @@ public class GameEventHandle : MonoBehaviour {
 		}
 
 	}
+
+	public void playExplosion(){
+		audioPlayer.clip = explosion;
+		audioPlayer.Play();
+	}
+
+	public void playJump(){
+		
+		audioPlayer.clip = jump;
+		audioPlayer.Play();
+	}
+
+	public void playLand(){
+		
+		audioPlayer.clip = land;
+		audioPlayer.Play();
+	}
+
+	public void playWalk(){
+		
+		audioPlayer.clip = walk1;
+		audioPlayer.Play();
+	}
+
+
 }

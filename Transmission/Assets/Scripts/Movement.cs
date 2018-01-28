@@ -67,9 +67,16 @@ public class Movement : MonoBehaviour {
 				Instantiate(deathParticle, gameObject.transform.position, gameObject.transform.rotation);
 			}
 
+
+//			deathTimer t = GetComponent<deathTimer>();
+//
+//			if(t){
+//				t.enabled = true;
+//			}
+
 			Destroy(gameObject);
 
-			Debug.Log(gameObject.name + " Dead!");
+			//Debug.Log(gameObject.name + " Dead!");
 		}
 	}
 	
@@ -103,6 +110,7 @@ public class Movement : MonoBehaviour {
 		//Jump animation
 		if ( grounded % 2 == 1 ) {
 			animator.SetBool("isGrounded", true);
+			//GameEventHandle.Instance.playWalk();
 
 		} else if ( grounded % 2 == 0 && grounded != 0 ) {
 			animator.SetBool("isGrounded", false);
@@ -126,7 +134,7 @@ public class Movement : MonoBehaviour {
 
 		// if is dead do not handle input
 		if(isDead){
-			Debug.Log ("dead");
+			//Debug.Log ("dead");
 			return;
 		}
 
@@ -146,7 +154,7 @@ public class Movement : MonoBehaviour {
 		}
 
 
-		if (Input.GetKeyDown (KeyCode.UpArrow) ){
+		if (Input.GetKeyDown (KeyCode.Space) ){
 			Jump();
 		}
 	}
@@ -168,6 +176,9 @@ public class Movement : MonoBehaviour {
 		//Debug.Log( grounded );
 
 		if ( grounded > 0) {
+
+			GameEventHandle.Instance.playJump();
+
 
 			rigidBody.velocity = new Vector2(rigidBody.velocity.x, 0);
 

@@ -44,6 +44,8 @@ public class Timer : MonoBehaviour {
 
 		bool noOneToLoveMe = true;
 
+		GameEventHandle.Instance.playExplosion();
+
 		int i = 0;
 		RaycastHit2D[] castStar = Physics2D.CircleCastAll (transform.position, explosionRadius, Vector2.zero);
 		foreach (RaycastHit2D raycastHit in castStar) {
@@ -59,7 +61,7 @@ public class Timer : MonoBehaviour {
 				if ( script.isFinalTarget ) {
 					Debug.Log(" Kabuum!");
 					Debug.Log(obj.name + " Infected, Mission Complete!");
-					noOneToLoveMe = false;
+					//noOneToLoveMe = false;
 
 				} else {
 					
