@@ -262,6 +262,8 @@ public class Movement : MonoBehaviour {
 		if(collision.gameObject.tag == "Player"){
 			//Debug.Log("Player ignored by corpse.");
 			Physics2D.IgnoreCollision(collision.collider, gameObject.GetComponent<Collider2D>());
+		}else if(collision.gameObject.tag == "Spikes"){
+			die();
 		}
 	}
 

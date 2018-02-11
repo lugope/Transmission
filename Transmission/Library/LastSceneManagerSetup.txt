@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/scene_extreme.unity
+- path: Assets/Scenes/tile_scene.unity
   isLoaded: 1
   isActive: 1
